@@ -1,0 +1,64 @@
+.home-root {
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  color: #222;
+}
+
+.hero {
+  height: 72vh;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(120deg, rgba(3,37,65,0.55), rgba(12,92,90,0.45)), url('Home.jpeg');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
+}
+
+.hero-overlay {
+  text-align: center;
+  padding: 2rem;
+  max-width: 920px;
+}
+
+.hero-title {
+  font-size: 2.6rem;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.5px;
+}
+
+.hero-sub {
+  font-size: 1.15rem;
+  margin-bottom: 1.25rem;
+  opacity: 0.95;
+}
+
+.hero-ctas { display:flex; gap:0.75rem; align-items:center; justify-content:center; }
+.btn { padding:0.6rem 1rem; border-radius:6px; border:0; cursor:pointer; font-weight:600; }
+.btn.primary { background:#ff7a59; color:white; box-shadow:0 6px 18px rgba(255,122,89,0.2); }
+.btn.ghost { background:transparent; color:white; border:1px solid rgba(255,255,255,0.2); }
+
+.content-section, .features, .cta-strip, .site-footer { padding:3.2rem 1rem; background:linear-gradient(180deg,#fff,#fbfdff); }
+.container-inner { max-width:1100px; margin:0 auto; }
+
+.content-section h2 { font-size:1.7rem; margin-bottom:0.5rem; }
+.content-section p { color:#333; line-height:1.6; }
+
+.features .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; margin-top:1rem; }
+.card { padding:1.25rem; border-radius:10px; background:linear-gradient(180deg,#fff,#f7fbfb); box-shadow:0 6px 20px rgba(18,38,63,0.06); border:1px solid rgba(10,30,45,0.03); }
+.card h3 { margin-top:0; }
+
+.cta-strip { background:linear-gradient(90deg,#0b5ed7,#00a3a3); color:white; text-align:center; }
+.cta-strip .btn.primary { background:white; color:#0b5ed7; }
+
+.site-footer { text-align:center; color:#556; font-size:0.9rem; }
+
+/* Reveal animations */
+.reveal { opacity:0; transform: translateY(12px); transition: all 600ms cubic-bezier(.2,.9,.2,1); }
+.reveal.visible { opacity:1; transform: translateY(0); }
+
+@media (max-width:720px){
+  .hero-title{ font-size:1.8rem }
+  .hero-sub{ font-size:1rem }
+  .hero{ min-height:520px }
+}
