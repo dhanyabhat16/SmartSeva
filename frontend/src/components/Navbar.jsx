@@ -50,6 +50,20 @@ const Navbar = () => {
         )}
 
         {/* If logged in as citizen */}
+        {authUser?.role === "citizen" && (
+          <>
+
+            <Link
+              to="/profile"
+              className="flex items-center gap-1 hover:text-primary transition-colors"
+            >
+              <User size={22} />
+              <span className="text-xl">Profile</span>
+            </Link>
+          </>
+        )}
+
+        {/* If logged in as admin */}
         {authUser?.role === "admin" && (
           <>
 
@@ -62,8 +76,6 @@ const Navbar = () => {
             </Link>
           </>
         )}
-
-        {/* If logged in as admin */}
         
 
         {/* Logout always visible when user is logged in */}
