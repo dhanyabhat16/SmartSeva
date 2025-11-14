@@ -30,6 +30,7 @@ export default function Home() {
           <p className="hero-sub">Access government services quickly and securely</p>
           <div className="hero-ctas">
             <button className="btn primary" onClick={() => navigate('/register')}>Register Now</button>
+            <button className="btn secondary" onClick={() => navigate('/login')}>Login</button>
             <a className="btn ghost" href="#about">Learn more</a>
           </div>
         </div>

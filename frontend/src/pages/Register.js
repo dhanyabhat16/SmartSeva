@@ -46,7 +46,6 @@ export default function Register() {
         const text = await res.text();
         throw new Error(text || "Server error");
       }
-      alert("Registration successful");
       navigate("/", { replace: true });
       setForm({
         name: "",
