@@ -24,22 +24,44 @@ const ManageBusSchedule = () => {
     getAllStops();
   }, []);
 
-  // Fetch selected bus details when bus changes
+  // Load selected bus details and generate schedule
   useEffect(() => {
     if (!selectedBus) return;
+
     const bus = buses.find((b) => b.bus_id === parseInt(selectedBus));
     setBusDetails(bus);
+
+    console.log("Selected Bus:", bus);
+
+    // If bus already has schedule → load it
     if (bus?.schedule && bus.schedule.length > 0) {
       setSchedule(bus.schedule);
       setIsEditing(true);
-    } else {
-      const newSchedule = stops.map((stop) => ({
+      return;
+    }
+
+    // Otherwise create schedule from route stops
+    if (bus?.stops) {
+      const orderedStopNames = bus.stops.split("_");
+
+      const routeStops = orderedStopNames
+        .map((name) =>
+          stops.find(
+            (s) =>
+              s.stop_name.toLowerCase().trim() ===
+              name.toLowerCase().trim()
+          )
+        )
+        .filter(Boolean);
+
+      const formattedSchedule = routeStops.map((stop) => ({
         stop_id: stop.stop_id,
         stop_name: stop.stop_name,
         arrival_time: "",
         departure_time: "",
       }));
-      setSchedule(newSchedule);
+
+      setSchedule(formattedSchedule);
       setIsEditing(false);
     }
   }, [selectedBus, buses, stops]);
@@ -53,11 +75,13 @@ const ManageBusSchedule = () => {
   const handleAddSchedule = async () => {
     try {
       const payload = {
-        stop_schedules: schedule.map(({ stop_id, arrival_time, departure_time }) => ({
-          stop_id,
-          arrival_time,
-          departure_time,
-        })),
+        stop_schedules: schedule.map(
+          ({ stop_id, arrival_time, departure_time }) => ({
+            stop_id,
+            arrival_time,
+            departure_time,
+          })
+        ),
       };
       await addBusSch(selectedBus, payload);
       toast.success("Schedule added successfully!");
@@ -70,11 +94,13 @@ const ManageBusSchedule = () => {
   const handleEditSchedule = async () => {
     try {
       const payload = {
-        stop_schedules: schedule.map(({ stop_id, arrival_time, departure_time }) => ({
-          stop_id,
-          arrival_time,
-          departure_time,
-        })),
+        stop_schedules: schedule.map(
+          ({ stop_id, arrival_time, departure_time }) => ({
+            stop_id,
+            arrival_time,
+            departure_time,
+          })
+        ),
       };
       await editBusSch(selectedBus, payload);
       toast.success("Schedule updated successfully!");
@@ -147,7 +173,6 @@ const ManageBusSchedule = () => {
             <table className="min-w-full border border-border rounded-lg">
               <thead className="bg-muted text-foreground">
                 <tr>
-                  
                   <th className="p-3 border border-border">Stop Name</th>
                   <th className="p-3 border border-border">Arrival Time</th>
                   <th className="p-3 border border-border">Departure Time</th>
@@ -156,8 +181,9 @@ const ManageBusSchedule = () => {
               <tbody>
                 {schedule.map((stop, index) => (
                   <tr key={stop.stop_id} className="text-center">
-                    
-                    <td className="p-3 border border-border">{stop.stop_name}</td>
+                    <td className="p-3 border border-border">
+                      {stop.stop_name}
+                    </td>
                     <td className="p-3 border border-border">
                       <input
                         type="time"
@@ -173,7 +199,11 @@ const ManageBusSchedule = () => {
                         type="time"
                         value={stop.departure_time}
                         onChange={(e) =>
-                          handleTimeChange(index, "departure_time", e.target.value)
+                          handleTimeChange(
+                            index,
+                            "departure_time",
+                            e.target.value
+                          )
                         }
                         className="border border-input bg-background text-foreground rounded-md p-1 w-32"
                       />
