@@ -1,8 +1,20 @@
--- SmartSeva Database Schema
--- Run this file in MySQL Workbench
-
 CREATE DATABASE IF NOT EXISTS citizens;
 USE citizens;
+DROP TRIGGER IF EXISTS update_completion_date;
+DROP TRIGGER IF EXISTS calculate_age_on_insert;
+DROP TRIGGER IF EXISTS calculate_age_on_update;
+DROP TRIGGER IF EXISTS log_application_status_change;
+
+DROP FUNCTION IF EXISTS GetTotalApplications;
+DROP FUNCTION IF EXISTS GetAvgProcessingTime;
+DROP FUNCTION IF EXISTS IsAdmin;
+
+DROP PROCEDURE IF EXISTS GetApplicationDetails;
+DROP PROCEDURE IF EXISTS UpdateApplicationStatus;
+DROP PROCEDURE IF EXISTS GetApplicationsByDepartment;
+DROP PROCEDURE IF EXISTS GetDashboardStats;
+DROP PROCEDURE IF EXISTS GetCitizenApplications;
+DROP PROCEDURE IF EXISTS GetPendingDocuments;
 
 -- Drop tables if they exist (in reverse order due to foreign keys)
 DROP TABLE IF EXISTS Payment;
@@ -173,6 +185,17 @@ INSERT INTO Admin (citizen_id, dept_id, role) VALUES
 -- ============================================
 -- TRIGGERS
 -- ============================================
+DELIMITER //
+CREATE TRIGGER validate_dob_before_insert
+BEFORE INSERT ON Citizen
+FOR EACH ROW
+BEGIN
+    IF NEW.dob > '2020-01-01' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Date of Birth after 2020 is not allowed';
+    END IF;
+END //
+DELIMITER ;
 
 -- Trigger to update completion_date when status changes to COMPLETED
 DELIMITER //
@@ -209,16 +232,13 @@ BEGIN
 END //
 DELIMITER ;
 
--- Trigger to log application status changes (optional audit trail)
+-- Trigger to log application status changes 
 DELIMITER //
 CREATE TRIGGER log_application_status_change
 AFTER UPDATE ON Application
 FOR EACH ROW
 BEGIN
     IF OLD.status != NEW.status THEN
-        -- You could insert into an audit table here if needed
-        -- INSERT INTO ApplicationAudit (app_id, old_status, new_status, changed_at) 
-        -- VALUES (NEW.app_id, OLD.status, NEW.status, NOW());
         SET @status_changed = 1;
     END IF;
 END //
@@ -444,3 +464,6 @@ DELIMITER ;
 -- Show all tables
 SELECT 'Database setup complete!' AS Message;
 
+SELECT d.dept_id,d.dept_name,d.contact_email,d.contact_phone,COUNT(g.grievance_id) AS total_grievances
+FROM Department d JOIN Service s ON d.dept_id = s.dept_id JOIN Grievance g ON s.service_id = g.service_id GROUP BY d.dept_id, d.dept_name, d.contact_email, d.contact_phone
+ORDER BY total_grievances DESC LIMIT 1;
