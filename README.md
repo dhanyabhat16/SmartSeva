@@ -532,12 +532,6 @@ Note: Passwords are hashed. For testing, register a new user.
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
 ## 📞 Support
 
 For issues, questions, or contributions:
